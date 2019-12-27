@@ -135,11 +135,9 @@ class AuthorisationMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
-
         if ($this->isAuthorized($request)) {
-            return $handler->handler($request);
+            return $handler->handle($request);
         }
-
         throw new NotAuthorizedException('Not authorized');
     }
 
