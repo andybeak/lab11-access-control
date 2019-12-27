@@ -3,6 +3,8 @@
 namespace App\Middleware;
 
 use App\Exceptions\NotAuthenticatedException;
+use App\Exceptions\NotAuthorizedException;
+use Casbin\Enforcer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -12,6 +14,11 @@ use Exception;
 
 class AuthorisationMiddleware implements MiddlewareInterface
 {
+
+    /**
+     * @var Enforcer
+     */
+    private $enforcer;
 
     /**
      * Retrieve the Authorization header from the HTTP request
@@ -92,13 +99,32 @@ class AuthorisationMiddleware implements MiddlewareInterface
 
     }
 
+    private function isAuthorized(ServerRequestInterface $request): bool
+    {
+        $user = $this->getAuthenticatedUser($request);
+    }
+
     /**
      * {@inheritdoc}
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
-        $authenticatedUser = $this->getAuthenticatedUser($request);
 
-        return $handler->handler($request);
+        if ($this->isAuthorized($request)) {
+            return $handler->handler($request);
+        }
+
+        throw new NotAuthorizedException('Not authorized');
+    }
+
+    /**
+     * Fluent setter
+     * @param Enforcer $enforcer
+     * @return $this
+     */
+    public function setAuthService(Enforcer $enforcer)
+    {
+        $this->enforcer = $enforcer;
+        return $this;
     }
 }

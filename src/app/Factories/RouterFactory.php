@@ -17,8 +17,6 @@ class RouterFactory
         $router->map('GET', '/articles', 'App\Controllers\ArticlesController::showArticle');
         $router->map('POST', '/articles', 'App\Controllers\ArticlesController::createArticle');
 
-        $router->middleware(new AuthorisationMiddleware());
-
         return $router;
     }
 }
