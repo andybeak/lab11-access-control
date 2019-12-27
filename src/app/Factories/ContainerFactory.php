@@ -63,7 +63,6 @@ class ContainerFactory
             return $router;
         };
 
-
         return $container;
     }
 }

@@ -4,6 +4,7 @@ namespace App;
 
 use App\Exceptions\BadHTTPMethodException;
 use App\Exceptions\NotAuthenticatedException;
+use App\Exceptions\NotAuthorizedException;
 use App\Factories\ContainerFactory;
 use Psr\Http\Message\ResponseInterface;
 

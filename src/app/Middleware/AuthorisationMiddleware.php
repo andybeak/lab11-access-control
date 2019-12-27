@@ -2,7 +2,6 @@
 
 namespace App\Middleware;
 
-use App\Exceptions\BadHTTPMethodException;
 use App\Exceptions\NotAuthenticatedException;
 use App\Exceptions\NotAuthorizedException;
 use Casbin\Enforcer;
