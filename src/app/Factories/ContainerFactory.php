@@ -5,6 +5,8 @@ namespace App\Factories;
 use Pimple\Container;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Zend\Diactoros\ServerRequestFactory;
+use App\Factories\RouterFactory;
 
 class ContainerFactory
 {
@@ -26,6 +28,18 @@ class ContainerFactory
                     Logger::DEBUG)
             );
             return $logger;
+        };
+
+        // build the request into the container
+        $container['request'] = function() {
+            return ServerRequestFactory::fromGlobals(
+                $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES
+            );
+        };
+
+        // add the router
+        $container['router'] = function($container) {
+            return RouterFactory::makeRouter();
         };
 
         return $container;
