@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Exceptions\BadHTTPMethodException;
 use App\Exceptions\NotAuthenticatedException;
 use App\Factories\ContainerFactory;
 use Psr\Http\Message\ResponseInterface;
@@ -34,9 +35,11 @@ class Main
         } catch (NotAuthenticatedException $e) {
             $response = $response->withStatus(401, $e->getMessage());
             $response->getBody()->write($e->getMessage());
+        } catch (NotAuthorizedException $e) {
+            $response = $response->withStatus(403, $e->getMessage());
+            $response->getBody()->write($e->getMessage());
         } finally {
             return $response;
         }
     }
-
 }

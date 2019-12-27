@@ -2,6 +2,7 @@
 
 namespace App\Middleware;
 
+use App\Exceptions\BadHTTPMethodException;
 use App\Exceptions\NotAuthenticatedException;
 use App\Exceptions\NotAuthorizedException;
 use Casbin\Enforcer;
@@ -99,9 +100,34 @@ class AuthorisationMiddleware implements MiddlewareInterface
 
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @return bool
+     * @throws BadHTTPMethodException
+     * @throws NotAuthenticatedException
+     * @throws \Casbin\Exceptions\CasbinException
+     */
     private function isAuthorized(ServerRequestInterface $request): bool
     {
-        $user = $this->getAuthenticatedUser($request);
+        $subject = $this->getAuthenticatedUser($request);
+
+        $object = ltrim($request->getUri()->getPath(), '/');
+
+        $verbMapping = [
+            'GET'       => 'list',
+            'POST'      => 'create',
+            'PUT'       => 'update',
+            'PATCH'     => 'update',
+            'DELETE'    => 'delete'
+        ];
+
+        $requestMethod = $request->getMethod();
+
+        $action = $verbMapping[$requestMethod];
+
+        $allowed = $this->enforcer->enforce($subject, $object, $action);
+
+        return $allowed;
     }
 
     /**
