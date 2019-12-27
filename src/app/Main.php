@@ -25,7 +25,9 @@ class Main
      */
     public function run(): ResponseInterface
     {
-
+        $router = $this->container['router'];
+        $request = $this->container['request'];
+        return $router->dispatch($request);
     }
 
 }
