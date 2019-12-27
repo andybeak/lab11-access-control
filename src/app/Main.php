@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Exceptions\NotAuthenticatedException;
 use App\Factories\ContainerFactory;
 use Psr\Http\Message\ResponseInterface;
 
@@ -27,7 +28,15 @@ class Main
     {
         $router = $this->container['router'];
         $request = $this->container['request'];
-        return $router->dispatch($request);
+        $response = $this->container['response'];
+        try {
+            $response = $router->dispatch($request);
+        } catch (NotAuthenticatedException $e) {
+            $response = $response->withStatus(401, $e->getMessage());
+            $response->getBody()->write($e->getMessage());
+        } finally {
+            return $response;
+        }
     }
 
 }

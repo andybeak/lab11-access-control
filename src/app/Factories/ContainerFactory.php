@@ -5,6 +5,7 @@ namespace App\Factories;
 use Pimple\Container;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 use App\Factories\RouterFactory;
 
@@ -38,8 +39,13 @@ class ContainerFactory
         };
 
         // add the router
-        $container['router'] = function($container) {
+        $container['router'] = function() {
             return RouterFactory::makeRouter();
+        };
+
+        // include a response
+        $container['response'] = function() {
+            return new Response();
         };
 
         return $container;
